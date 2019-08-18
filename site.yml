@@ -1,0 +1,28 @@
+---
+- name: Prepare
+  hosts: all
+  become: yes
+  become_user: root
+  tasks:
+    - name: Create mountpoint dir
+      file: path=/mnt/external state=directory
+
+    - name: Configure cache dir mountpoint
+      mount: path=/mnt/external fstype=ext4 src=/dev/sda1 opts=defaults,noatime passno=2 state=mounted
+
+    - name: Create squid user
+      user: name=squid system=yes
+
+    - name: Create the squid cache dir
+      file: path=/mnt/external/squid_cache owner=squid group=squid state=directory
+
+
+- name: Install squid
+  hosts: all
+  become: yes
+  roles:
+    - robertdebock.squid
+  vars:
+    # http://www.squid-cache.org/Doc/config/cache_dir/
+    # aufs Directory-Name Mbytes L1 L2 [options]
+    squid_cache_dir: aufs /mnt/external/squid_cache 1048576 16 256
