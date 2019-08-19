@@ -15,4 +15,4 @@ Install the role dependencies.
 
 Run the playbook.
 
-    $ pipenv run ansible-playbook site.yml
+    $ pipenv run ansible-playbook -i inventory site.yml
